@@ -1,0 +1,17 @@
+# 统一换行：仓库里一律 LF，检出时按平台默认。
+# 缺少这一段时 `core.autocrlf=true` 的机器会把文本转成 CRLF，
+# 于是「GitHub 装出来的文件」和「本地构建产物」哈希不同，核对时误判。
+* text=auto eol=lf
+
+# 这些必须是原样字节，不能被转换。
+*.exe binary
+*.dll binary
+*.png binary
+*.ico binary
+
+# Windows 下的 .cmd/.bat 需要 CRLF 才能可靠执行。
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# .csproj 由 dotnet 读取，CRLF 更符合 Windows 工具链习惯。
+*.csproj text eol=crlf

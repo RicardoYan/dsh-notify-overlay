@@ -1,0 +1,10 @@
+# dsh-notify-overlay —— Windows 置顶通知浮窗
+#
+# host 半区监听 DSH 事件并驱动一个常驻的 WPF 浮窗进程；
+# client 半区负责同步主题、以及在浮窗被点击后跳转会话。
+#
+# Install:   dsh plugin --profile <profile> add <path-or-github>
+
+- insert:
+    - id: notify-overlay
+      name: dsh-notify-overlay

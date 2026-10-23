@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <AssemblyName>dsh-notify-overlay</AssemblyName>
+    <RootNamespace>DshNotifyOverlay</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Deterministic>true</Deterministic>
+    <!-- 单文件式输出：把依赖合并进 exe 目录，避免运行时找 DLL -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <OutputPath>..\..\lib\native\</OutputPath>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <!-- 关闭 splash / 高 DPI 自动缩放交给 manifest -->
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <Product>dsh-notify-overlay</Product>
+    <Company>RicardoYan</Company>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+
+</Project>

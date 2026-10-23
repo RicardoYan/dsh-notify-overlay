@@ -1,0 +1,8 @@
+node_modules/
+src/native/obj/
+src/native/bin/
+*.user
+
+# 开发依赖的锁文件。仓库里不提交依赖版本锁定：插件本身没有运行期
+# node_modules（官方包走 peerDependencies），这份锁只影响本地开发。
+pnpm-lock.yaml

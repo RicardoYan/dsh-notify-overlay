@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Notification overlay (dsh-notify-overlay)",
+    "description": "A self-drawn always-on-top card at the bottom right: approvals, questions, failures, turn completion, subagent completion, and conversation closure each have their own switch. Reminders that block a conversation stay until handled and collapse into a draggable ball. Clicking a card opens the conversation and brings DSH to the front. Turn the overlay off to get system notifications instead, which also works on macOS and Linux. Follows DSH's light and dark themes."
+  }
+}

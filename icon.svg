@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
+  <!--
+    通知浮窗 dsh-notify-overlay
+
+    视觉规格照官方 icon 约定：36×36 画布，内部 28×28 的 rx=8 圆角方块，
+    方块用垂直渐变，图标本身是白色线条。
+
+    图形含义：一只铃铛 + 右下角一个定位点——铃铛是"提醒"，
+    定位点在右下角对应本插件的实际形态（屏幕右下角的卡片）。
+  -->
+  <defs>
+    <linearGradient id="bg" x1="4" y1="4" x2="4" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#4C8DFF"/>
+      <stop offset="1" stop-color="#2E5FE0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 内部圆角方块 -->
+  <rect x="4" y="4" width="28" height="28" rx="8" fill="url(#bg)"/>
+
+  <!-- 铃铛：钟体 + 底部横条 + 铃舌 -->
+  <path
+    d="M18 9.5c-2.9 0-5.1 2.2-5.1 5.1v3.6c0 .8-.3 1.5-.8 2.1l-.7.8a.9.9 0 0 0 .7 1.5h11.8a.9.9 0 0 0 .7-1.5l-.7-.8a3.3 3.3 0 0 1-.8-2.1v-3.6c0-2.9-2.2-5.1-5.1-5.1Z"
+    stroke="#FFFFFF"
+    stroke-width="1.7"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M16.1 23.9a2 2 0 0 0 3.8 0"
+    stroke="#FFFFFF"
+    stroke-width="1.7"
+    stroke-linecap="round"
+  />
+
+  <!-- 右下角定位点：表示提醒落在屏幕右下角 -->
+  <circle cx="26.5" cy="26.5" r="3.5" fill="#FFFFFF"/>
+  <circle cx="26.5" cy="26.5" r="1.5" fill="#2E5FE0"/>
+</svg>

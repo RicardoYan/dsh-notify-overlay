@@ -1,0 +1,95 @@
+{
+  "name": "dsh-notify-overlay",
+  "version": "0.1.0",
+  "description": "Always-on-top notification overlay for DeepSeek Harness: self-drawn cards for approvals, questions, failures, turn completion, subagent completion and conversation closure, persistent reminders collapsing into a draggable ball, click to open the conversation and bring DSH to the front. Turn the overlay off to get native OS notifications instead, which also works on macOS and Linux · DeepSeek Harness 的置顶通知浮窗：审批/提问/出错/轮次完成/子代理完成/会话结束时在屏幕右下角显示自绘卡片，持久提醒收进可拖动的小球，点击可跳回对应会话并把 DSH 置顶。关掉浮窗则改用系统通知，macOS 和 Linux 也能用。",
+  "type": "module",
+  "main": "lib/index.js",
+  "icon": "icon.svg",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "lib",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE",
+    "locale/*.json",
+    "icon.svg",
+    "docs/*.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:native": "dotnet build src/native/Overlay.csproj -c Release",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.client.json",
+    "preflight": "node scripts/preflight.mjs",
+    "test": "node test/waterfall.mjs && node test/e2e.mjs && node test/text.mjs && node test/settings.mjs && node test/hotupdate.mjs && node test/panel-store.mjs && node test/filters.mjs && node test/system.mjs",
+    "test:toast": "node test/toast-win.mjs",
+    "test:visual": "node test/height.mjs && node test/sound.mjs && node test/restart.mjs && node test/reuse.mjs"
+  },
+  "license": "MIT",
+  "author": "RicardoYan <25615265+RicardoYan@users.noreply.github.com>",
+  "homepage": "https://github.com/RicardoYan/dsh-notify-overlay#readme",
+  "bugs": {
+    "url": "https://github.com/RicardoYan/dsh-notify-overlay/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RicardoYan/dsh-notify-overlay.git"
+  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "notify",
+    "notification",
+    "toast",
+    "overlay",
+    "windows",
+    "macos",
+    "linux"
+  ],
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0",
+    "dsh": "^0.2.1-rc.2"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "searchTerms": [
+      "桌面通知",
+      "系统通知",
+      "通知",
+      "浮窗",
+      "审批提醒",
+      "轮次完成",
+      "会话结束",
+      "notify",
+      "notification",
+      "toast",
+      "overlay"
+    ],
+    "client": {
+      "platform": "web",
+      "inject": []
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.5",
+    "@deepseek-ai/dsh-client-locale": "^0.2.1-rc.2",
+    "@deepseek-ai/dsh-client-ui-slots": "^0.2.1-rc.2",
+    "@deepseek-ai/schemastery": "^3.18.2"
+  },
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-client-locale": { "optional": true },
+    "@deepseek-ai/dsh-client-ui-slots": { "optional": true }
+  },
+  "devDependencies": {
+    "@deepseek-ai/cordis": "4.0.5",
+    "@types/node": "^26.2.0",
+    "typescript": "^6.0.3"
+  }
+}
