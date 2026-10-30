@@ -227,6 +227,27 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
   }
 
   /**
+   * Whether a message only makes sense against an overlay that is already
+   * running.
+   *
+   * `remove` withdraws an entry from the overlay's pending list, `theme` and
+   * `config` retune a window that is already drawing. None of them has anything
+   * to act on when there is no process: its in-memory state is empty by
+   * definition. Starting a process to deliver one of them therefore only makes
+   * the ball appear — or keeps it alive — for a reminder the user has already
+   * dealt with.
+   *
+   * `notify` and `sound` are the opposite: they are the reminders themselves, so
+   * they are what justifies starting the process at all.
+   * @param msg - the command about to be delivered.
+   * @returns true when the message must be dropped if nothing is running.
+   */
+  function needsRunningOverlay(msg: unknown): boolean {
+    const op = (msg as { op?: unknown } | null)?.op
+    return op === 'remove' || op === 'theme' || op === 'config' || op === 'clear' || op === 'exit'
+  }
+
+  /**
    * Deliver one message to the overlay, starting it first if it is not running.
    *
    * The overlay is **lazily started**, not kept alive:
@@ -239,6 +260,13 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
    *   - After an exit nothing is respawned. The next message that actually needs
    *     the overlay brings it back, so a killed process costs one reminder, not
    *     a restart loop.
+   *   - A message that only *adjusts* an existing overlay does not start one.
+   *     The browser half reports the active conversation on every focus change
+   *     and once a second, and each report withdraws that conversation's error;
+   *     with the ball hidden that was one `remove` per focus change, and every
+   *     one of them spawned a fresh overlay whose only job was to be told
+   *     "nothing to remove". The user saw it as the ball popping up whenever they
+   *     switched windows.
    *
    * @param msg - the command to deliver.
    */
@@ -248,6 +276,9 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
     // a Windows binary elsewhere would only fail. Reminders take the OS path.
     if (!overlayAvailable) return
     if (child === null) {
+      // Nothing is running, so there is no pending list to withdraw from and no
+      // window to retheme. Dropping is the correct outcome, not a loss.
+      if (needsRunningOverlay(msg)) return
       outbox.push(msg)
       spawnOverlay()
       return

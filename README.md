@@ -11,7 +11,7 @@ DeepSeek Harness 的置顶通知浮窗。
 ## 安装
 
 ```
-dsh plugin --profile desktop add github:RicardoYan/dsh-notify-overlay#v0.1.1
+dsh plugin --profile desktop add github:RicardoYan/dsh-notify-overlay#v0.1.2
 ```
 
 装完重启 DSH。卸载把 `add` 换成 `remove`。

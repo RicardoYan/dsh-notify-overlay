@@ -1,8 +1,11 @@
 // 验证 scale 配置：依次用 0.85 / 1.0 / 1.25 显示，并打印窗口尺寸
 import { spawn, execFileSync } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const EXE = 'E:\\dsh-plugins\\dsh-notify-overlay\\lib\\native\\dsh-notify-overlay.exe';
+const here = dirname(fileURLToPath(import.meta.url));
+const EXE = join(here, '..', 'lib', 'native', 'dsh-notify-overlay.exe');
 const child = spawn(EXE, [], { stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });
 child.stdout.setEncoding('utf8');
 child.stdout.on('data', (d) => {

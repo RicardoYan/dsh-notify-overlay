@@ -1,4 +1,4 @@
-﻿// dsh-notify-overlay — Windows 置顶通知浮窗
+// dsh-notify-overlay — Windows 置顶通知浮窗
 //
 // 三种形态，同一个窗口：
 //   Card  临时卡片：新提醒弹出，N 秒后自动消失。没有计数、没有展开箭头，
@@ -54,6 +54,15 @@ namespace DshNotifyOverlay
         public double At;
         /// <summary>持久类：卡片消失后进列表、计小球。由 host 判定。</summary>
         public bool Persistent;
+        /// <summary>
+        /// 已经被 host 撤下（用户处理完了）。
+        ///
+        /// host 只在处理完那一刻发一次 remove。那时这条提醒可能还在卡片上
+        /// （没进 pending），也可能还排在队列里，所以撤下只清 pending 是不够的：
+        /// 卡片超时后 CardExpired 会把它重新塞进 pending，于是已经回答完的
+        /// 提问永久留在小球里。带上这个标记，三处都不再收它。
+        /// </summary>
+        public bool Withdrawn;
     }
 
     // ── 主题（取自 DSH CSS 变量）────────────────────────────────
@@ -455,7 +464,8 @@ namespace DshNotifyOverlay
         {
             var it = showing;
             showing = null;
-            if (it != null && it.Persistent) AddPending(it);
+            // 已经撤下（用户处理完）的不再进列表：卡片只是走完自己的停留时间。
+            if (it != null && it.Persistent && !it.Withdrawn) AddPending(it);
             ShowNextCard();
         }
 
@@ -554,6 +564,19 @@ namespace DshNotifyOverlay
         void Withdraw(string sessionId, string kind)
         {
             pending.RemoveAll(x => x.SessionId == sessionId && x.Kind == kind);
+
+            // 卡片还在显示、或者还排在队列里时，这条提醒都还没进 pending，
+            // 上面那句清不到它。打上标记，让 CardExpired 别再把它塞回来，
+            // 否则已经回答完的提问会在卡片超时后变成小球上的永久计数。
+            //
+            // 卡片本身不提前收起：它照常走完停留时间，用户看到的是「刚刚那条
+            // 提醒」，不是它突然消失。
+            if (showing != null && showing.SessionId == sessionId && showing.Kind == kind) {
+                showing.Withdrawn = true;
+            }
+            foreach (var queued in queue) {
+                if (queued.SessionId == sessionId && queued.Kind == kind) queued.Withdrawn = true;
+            }
 
             // 只剩卡片在显示时不去打扰它；小球 / 列表要跟着 pending 走。
             if (mode == Mode.List && pending.Count == 0) mode = Mode.Hidden;

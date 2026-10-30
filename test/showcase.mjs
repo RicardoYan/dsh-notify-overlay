@@ -17,8 +17,11 @@
 
 import { spawn } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const EXE = 'E:\\dsh-plugins\\dsh-notify-overlay\\lib\\native\\dsh-notify-overlay.exe';
+const here = dirname(fileURLToPath(import.meta.url));
+const EXE = join(here, '..', 'lib', 'native', 'dsh-notify-overlay.exe');
 const child = spawn(EXE, [], { stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true });
 child.stdout.setEncoding('utf8');
 child.stderr.setEncoding('utf8');
