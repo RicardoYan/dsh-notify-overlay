@@ -1,6 +1,6 @@
 {
   "name": "dsh-notify-overlay",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Always-on-top notification overlay for DeepSeek Harness: self-drawn cards for approvals, questions, failures, turn completion, subagent completion and conversation closure, persistent reminders collapsing into a draggable ball, click to open the conversation and bring DSH to the front. Turn the overlay off to get native OS notifications instead, which also works on macOS and Linux · DeepSeek Harness 的置顶通知浮窗：审批/提问/出错/轮次完成/子代理完成/会话结束时在屏幕右下角显示自绘卡片，持久提醒收进可拖动的小球，点击可跳回对应会话并把 DSH 置顶。关掉浮窗则改用系统通知，macOS 和 Linux 也能用。",
   "type": "module",
   "main": "lib/index.js",
@@ -93,7 +93,7 @@
   },
   "devDependencies": {
     "@deepseek-ai/cordis": "4.0.5",
-    "@deepseek-ai/dsh-client-ui-primitives": "0.2.1-rc.3",
+    "@deepseek-ai/dsh-client-ui-primitives": "0.2.1-rc.5",
     "@types/node": "^26.2.0",
     "@types/react": "~18.3.1",
     "react": "^18.2.0",
