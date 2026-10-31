@@ -458,7 +458,11 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
   // ── Pending navigation ────────────────────────────────────
   let pendingSession: string | null = null
 
-  /** Conversation titles, kept after disposal so the card can still name them. */
+  /**
+   * Conversation titles, kept after disposal so the card can still name them.
+   * Kept current by the `session/title` listener below, so a rename shows up on
+   * the next reminder.
+   */
   const labels = new Map<string, string>()
   /** Last reminder per conversation, for duplicate suppression. */
   const lastSent = new Map<string, { kind: Kind; at: number }>()
@@ -471,6 +475,11 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
    * `sessionTitle` service from `session/title` events. Reading `header.title`
    * silently always missed and fell through to the id prefix, which is why cards
    * read "session-" (the first eight characters of every session id).
+   *
+   * `sessionTitle.get()` scans the whole log, so it is only the first read for a
+   * conversation; later titles arrive through the `session/title` listener. That
+   * first read is still needed: a conversation restored from disk gets its log
+   * as a seed, which dispatches no `session/event`.
    */
   function labelOf(sessionId: string): string {
     const cached = labels.get(sessionId)
@@ -489,6 +498,22 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
     }
     return sessionId.slice(0, 8)
   }
+
+  // A rename, a generated title and the first-message fallback all append a
+  // `session/title` event (`dsh-session-title` `rename()` / `runProvider()` /
+  // `ensureFallback()`); the latest one is the title.
+  ctx.effect(() => ctx.on('session/event', (session, event) => {
+    try {
+      if (event?.type !== 'session/title') return
+      const sessionId = session?.id
+      const title = (event.data as { title?: unknown } | undefined)?.title
+      if (typeof sessionId !== 'string' || typeof title !== 'string' || title === '') return
+      labels.set(sessionId, title)
+      trace(`标题更新 session=${sessionId}`)
+    } catch {
+      // Title observation must never throw into the session append path.
+    }
+  }), 'notify-overlay: session title')
 
   /**
    * Normalize free text for a card.

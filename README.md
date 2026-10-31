@@ -11,7 +11,7 @@ DeepSeek Harness 的置顶通知浮窗。
 ## 安装
 
 ```
-dsh plugin --profile desktop add github:RicardoYan/dsh-notify-overlay#v0.1.3
+dsh plugin --profile desktop add github:RicardoYan/dsh-notify-overlay#v0.1.4
 ```
 
 装完重启 DSH。卸载把 `add` 换成 `remove`。
@@ -50,6 +50,7 @@ dsh plugin --profile desktop add github:RicardoYan/dsh-notify-overlay#v0.1.3
 - macOS / Linux 的系统通知未在真机验证
 - 小球位置只存内存，DSH 重启后回右下角
 - 系统通知模式下提示音不生效
+- 卡片上的会话名跟着改名更新，但**已经进列表的旧条目不会**——只有之后新弹的提醒用新名字
 
 ## License
 

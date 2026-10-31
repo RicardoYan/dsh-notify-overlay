@@ -64,6 +64,7 @@
 
 **Host 半区**（`lib/index.js`，Node 子进程）
 - 监听 `approval/request`、`user-questions/request`、`agent/status`、`agent/error`、`session/disposed`
+- 监听 `session/event` 里的 `session/title`，用来跟上会话改名（见下节）
 - 决定每条提醒走哪条通道：浮窗、只响一声、还是不发
 - 浮窗模式：把一个常驻的 WPF 浮窗进程拉起，用 stdin/stdout 每行一个 JSON 通信
 - 系统通知模式：调 `lib/system-notify.js` 起一个平台命令发通知
@@ -80,6 +81,16 @@
 - 唤回 DSH 主窗口走 Win32（最小化用 `SW_RESTORE`，托盘隐藏用 `dsh://open`，已可见只抢前台）
 
 跳会话为什么必须绕一圈：`uiWorkspace.openSession` 只存在于渲染进程，外部进程调不到。所以浮窗点击 → Host 缓存会话 id → 浏览器半区取走 → 渲染进程跳转。
+
+### 卡片上的会话名从哪来
+
+标题不在 `session.header` 里，而是会话日志中的 `session/title` 事件（取最后一条）。三种来源：用户改名（`source.kind === 'user'`）、模型生成（`provider`）、首条消息截断的兜底（`fallback`）。
+
+`ctx.get('sessionTitle').get(session)` 能拿到最新标题，但它内部是 `snapshotEvents()` 复制整个日志再 `findLast`——**开销跟日志长度成正比**，而且 `snapshotEvents` 已标 `@deprecated`。所以只在两种时候调用：缓存里没有这个会话时（第一次弹提醒、从磁盘恢复的会话），之后靠 `session/event` 里的 `session/title` 事件更新缓存。
+
+**为什么不能只靠监听**：从磁盘恢复的会话，日志是在 `Session` 构造函数里作为种子直接塞进去的，**不派发 `session/event`**。少了那次 `get()`，重启后所有卡片都会退回 id 前缀。
+
+已经收进小球列表的旧卡片不会跟着改名，只有新弹的提醒用新标题。
 
 ### 系统通知为什么放在 Host
 
@@ -101,12 +112,17 @@ npm run preflight    # 发布前检查：dsh.client 契约、exports、locale、
 ### 测试
 
 ```bash
-npm test               # 八个套件，纯逻辑，随时可跑
+export DSH_PACKAGES=<DSH 安装目录>/resources/app.asar.extracted/dsh/node_modules
+npm test               # 十个套件，随时可跑
 npm run test:toast     # Windows 真机：toast 是否真的进了系统通知库
 npm run test:visual    # 需要真机窗口：会弹浮窗、读日志
 ```
 
-`npm test` 覆盖：cordis 契约、配置默认值、面板字段一致性、热更新、过滤器决策、系统通知拼串。它不会拉起浮窗进程、不会弹系统通知、也不写生产日志——`overlay: false` 装载 + `DSH_NOTIFY_OVERLAY_TRACE` 重定向到临时文件。
+`npm test` 覆盖：cordis 契约、配置默认值、面板字段一致性、热更新、过滤器决策、系统通知拼串、会话标题跟随。它不会拉起浮窗进程、不会弹系统通知、也不写生产日志——`overlay: false` 装载 + `DSH_NOTIFY_OVERLAY_TRACE` 重定向到临时文件。
+
+**`DSH_PACKAGES` 是 `test/title.mjs` 要的**（其余九个不用）：它要跑在官方真实的 `SessionStore` + `SessionProjectionRegistry` + `SessionTitleService` 上，而且必须和宿主用**同一份 cordis**，否则 `Service` / `Context` 会分裂成两个世界、事件根本到不了对方。没设会打印提示并以退出码 2 结束。
+
+`test/title.mjs` 把 `child_process.spawn` 换成假的来截下发往浮窗的 JSON，所以不会起浮窗进程。它断言的是 `sessionLabel`，覆盖三种场景：改名后下一条提醒、会话移出内存后的「会话结束」卡片、用种子日志恢复的会话首次提醒；中英各跑一遍。这个文件扩展名是 `.mjs`，`import` 前换 `spawn` 还要配 `syncBuiltinESMExports` 才生效。
 
 `test:visual` 里的脚本会真的操作窗口和进程，各自独立：
 

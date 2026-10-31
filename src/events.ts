@@ -21,6 +21,8 @@ declare module '@deepseek-ai/cordis' {
     'agent/error'(payload: { agent?: unknown; error?: unknown }): void
     /** A conversation was disposed and will not be resumed in place. */
     'session/disposed'(session: { id?: string }): void
+    /** One event was committed to a live conversation's log. */
+    'session/event'(session: { id?: string }, event: { type?: string; data?: unknown }): void
     /**
      * The Loader committed new values into this plugin's `.volatile()` config
      * references. Emitted from `cordis-plugin-loader`'s `_commitVolatile` with a
