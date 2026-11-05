@@ -95,6 +95,9 @@ async function run(preference) {
 
   const ctx = new Context()
   ctx.provide('connection', { fetch: { register: () => () => {} } })
+  // DSH 0.2.2 的 SessionTitleService 又依赖 `agents`（0.2.1 只依赖
+  // sessions + sessionProjections）；缺了它服务根本不挂载。
+  ctx.provide('agents', {})
   // 插件从 loader 树里读语言（locale.ts 的 preferenceFromLoader）。
   ctx.provide('loader', {
     entries: () => [{ options: { name: '@deepseek-ai/dsh-client-locale', config: { preference } } }],
