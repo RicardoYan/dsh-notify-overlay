@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Superposición de notificaciones (dsh-notify-overlay)",
+    "description": "Una tarjeta siempre visible, dibujada por el propio complemento, en la esquina inferior derecha: aprobaciones, preguntas, fallos, fin de turno, fin de subagente y cierre de conversación tienen cada uno su interruptor. Los recordatorios que bloquean una conversación permanecen hasta resolverse y se recogen en una bola arrastrable. Al hacer clic se abre la conversación y se trae DSH al frente. Si desactiva la superposición, recibirá notificaciones del sistema, que también funcionan en macOS y Linux. Sigue los temas claro y oscuro de DSH."
+  }
+}

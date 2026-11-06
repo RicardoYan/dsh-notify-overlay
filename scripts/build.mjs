@@ -20,7 +20,7 @@ const OUT = join(ROOT, 'lib')
  * The Host entry imports these; `transpileModule` never follows imports, so each
  * one has to be emitted on its own or the published bundle fails at import time.
  */
-const HOST_MODULES = ['locale.ts', 'system-notify.ts']
+const HOST_MODULES = ['locale.ts', 'text.locales.ts', 'system-notify.ts']
 
 const HOST = {
   target: ts.ScriptTarget.ES2024,

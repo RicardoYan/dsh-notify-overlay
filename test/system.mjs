@@ -121,7 +121,12 @@ check('提示语不再声称能唤回', /唤到前台|brings DSH forward/.test(c
 
 // ── 6. 构建脚本带上新模块 ──────────────────────────────────────
 const buildSource = readFileSync(join(root, 'scripts', 'build.mjs'), 'utf8')
-check('build 的 HOST_MODULES 含 system-notify', /HOST_MODULES = \['locale\.ts', 'system-notify\.ts'\]/.test(buildSource), true)
+// 只要求列表里含这两个模块：插件继续拆出新的 Host 模块时不该让这条断言失效。
+check(
+  'build 的 HOST_MODULES 含 locale 与 system-notify',
+  /HOST_MODULES = \[[^\]]*'locale\.ts'[^\]]*'system-notify\.ts'[^\]]*\]/.test(buildSource),
+  true,
+)
 check('build 会清理旧的 system-notify.js', /'system-notify\.js'/.test(buildSource), true)
 
 // ── 7. 真实调用不炸（端到端冒烟） ─────────────────────────────

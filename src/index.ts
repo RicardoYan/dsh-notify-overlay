@@ -35,6 +35,7 @@ import z from '@deepseek-ai/schemastery'
 import type { Context } from '@deepseek-ai/cordis'
 import type {} from './events.js'
 import { L, lang, preferenceFromLoader, setLocaleSource, type Text } from './locale.js'
+import { X } from './text.locales.js'
 import { showSystemNotice } from './system-notify.js'
 
 export const name = 'notify-overlay'
@@ -806,9 +807,9 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
         notify({
           sessionId,
           kind: 'approval',
-          title: L('需要审批', 'Approval needed'),
+          title: L('需要审批', 'Approval needed', X.approvalTitle),
           body: detail === ''
-            ? L('请求授权', 'Requests authorization')
+            ? L('请求授权', 'Requests authorization', X.approvalBody)
             : L(detail, detail),
         })
       }
@@ -856,10 +857,10 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
         notify({
           sessionId,
           kind: 'question',
-          title: L('需要你回答', 'Your answer is needed'),
+          title: L('需要你回答', 'Your answer is needed', X.questionTitle),
           body: typeof first === 'string'
             ? L(flatten(first), flatten(first))
-            : L('Agent 有问题要问你', 'The agent has a question for you'),
+            : L('Agent 有问题要问你', 'The agent has a question for you', X.questionBody),
         })
       }
     } catch (error) {
@@ -924,15 +925,15 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
         notify({
           sessionId: root,
           kind: 'subagent',
-          title: L('子代理全部完成', 'Subagents finished'),
+          title: L('子代理全部完成', 'Subagents finished', X.subagentsDoneTitle),
           body: L('', ''),
         })
       } else {
         notify({
           sessionId: root,
           kind: 'turn',
-          title: L('轮次完成', 'Turn complete'),
-          body: L('Agent 已空闲', 'The agent is idle'),
+          title: L('轮次完成', 'Turn complete', X.turnDoneTitle),
+          body: L('Agent 已空闲', 'The agent is idle', X.turnDoneBody),
         })
       }
     } catch {
@@ -957,7 +958,7 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
       notify({
         sessionId: root,
         kind: 'error',
-        title: subagent ? L('子代理出错', 'Subagent failed') : L('执行出错', 'Run failed'),
+        title: subagent ? L('子代理出错', 'Subagent failed', X.subagentFailedTitle) : L('执行出错', 'Run failed', X.runFailedTitle),
         body: L(flatten(String(text)), flatten(String(text))),
       })
     } catch {
@@ -977,7 +978,7 @@ export function apply(ctx: Context & Record<string, any>, config: any): void {
       notify({
         sessionId,
         kind: 'sessionDone',
-        title: L('会话结束', 'Conversation closed'),
+        title: L('会话结束', 'Conversation closed', X.sessionClosedTitle),
         body: L('', ''),
       })
       labels.delete(sessionId)

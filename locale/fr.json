@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Superposition de notifications (dsh-notify-overlay)",
+    "description": "Une carte toujours au premier plan, dessinée par le greffon, en bas à droite : approbations, questions, échecs, fin de tour, fin de sous-agent et fermeture de conversation ont chacun leur interrupteur. Les rappels qui bloquent une conversation restent jusqu'à leur traitement et se replient en une boule déplaçable. Un clic ouvre la conversation et ramène DSH au premier plan. Si vous désactivez la superposition, vous recevez les notifications système, qui fonctionnent aussi sous macOS et Linux. Suit les thèmes clair et sombre de DSH."
+  }
+}

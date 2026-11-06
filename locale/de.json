@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Benachrichtigungs-Overlay (dsh-notify-overlay)",
+    "description": "Eine selbst gezeichnete, immer im Vordergrund stehende Karte unten rechts: Genehmigungen, Fragen, Fehler, Rundenende, Subagenten-Ende und Sitzungsende haben jeweils einen eigenen Schalter. Erinnerungen, die eine Sitzung blockieren, bleiben bis zur Erledigung und ziehen sich zu einem verschiebbaren Ball zusammen. Ein Klick öffnet die Sitzung und holt DSH nach vorn. Ist das Overlay aus, kommen stattdessen Systembenachrichtigungen, was auch unter macOS und Linux funktioniert. Folgt dem hellen und dunklen Thema von DSH."
+  }
+}
