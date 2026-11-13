@@ -50,6 +50,26 @@ const readHostLog = () => (existsSync(hostLog) ? readFileSync(hostLog, 'utf8') :
 const spawnCount = () => [...readOverlayLog().matchAll(/main 启动完成/g)].length
 
 /**
+ * Wait until the overlay logs at least `count` starts, or the budget runs out.
+ *
+ * The WPF process needs 1.4–4 s from spawn to its first log line (measured
+ * 2026-11-14: `main 启动完成` landed between 1.4 s and 4 s across runs), so a
+ * fixed sleep below 4 s fails at random. Polling the log it writes anyway is
+ * both faster on a warm start and reliable on a cold one.
+ * @param count - the number of starts to wait for.
+ * @param budgetMs - how long to wait before giving up.
+ * @returns whether the count was reached in time.
+ */
+async function waitForStarts(count, budgetMs = 10000) {
+  const deadline = Date.now() + budgetMs
+  while (Date.now() < deadline) {
+    if (spawnCount() >= count) return true
+    await new Promise((r) => setTimeout(r, 100))
+  }
+  return spawnCount() >= count
+}
+
+/**
  * PIDs of overlay processes this test started.
  *
  * They are children of this process, so the tasklist query is enough; the
@@ -138,10 +158,11 @@ try {
     await new Promise((r) => setTimeout(r, 400))
     check('单独一条 remove 不启动', spawnCount() === before, `${spawnCount() - before} 次`)
 
-    // 再来一条真提醒：必须启动
+    // 再来一条真提醒：必须启动。等日志里出现下一次「main 启动完成」，
+    // 不猜固定时长——WPF 冷启动 1.4–4 s 波动，固定 sleep 会随机失败。
     ctx.emit?.('approval/request', { agent: { id: 'session-y' }, toolName: 'Bash', reason: 'spawn-policy test' },
       () => new Promise(() => {}))
-    await new Promise((r) => setTimeout(r, 1500))
+    await waitForStarts(before + 1)
 
     check('真提醒仍然拉起浮窗', spawnCount() > before,
       `只起了 ${spawnCount() - before} 次；浮窗日志：${readOverlayLog().slice(0, 200) || '(空)'}`)
